@@ -2,13 +2,11 @@ unit NewNotebook;
 
 {
   Inno Setup
-  Copyright (C) 1997-2008 Jordan Russell
+  Copyright (C) 1997-2018 Jordan Russell
   Portions by Martijn Laan
   For conditions of distribution and use, see LICENSE.TXT.
 
   TNewNotebook component
-
-  $jrsoftware: issrc/Components/NewNotebook.pas,v 1.4 2008/10/08 23:23:02 jr Exp $
 }
 
 {$IFDEF VER90}
@@ -47,6 +45,7 @@ type
   published
     property ActivePage: TNewNotebookPage read FActivePage write SetActivePage;
     property Align;
+    property Anchors;
     property Color;
     property DragCursor;
     property DragMode;
@@ -112,6 +111,9 @@ type
   end;
 
 implementation
+
+uses
+  Types;
 
 { TNewNotebookPage }
 

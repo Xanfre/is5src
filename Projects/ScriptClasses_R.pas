@@ -2,13 +2,11 @@ unit ScriptClasses_R;
 
 {
   Inno Setup
-  Copyright (C) 1997-2008 Jordan Russell
+  Copyright (C) 1997-2018 Jordan Russell
   Portions by Martijn Laan
   For conditions of distribution and use, see LICENSE.TXT.
 
   Script support classes (run time)
-
-  $Id: ScriptClasses_R.pas,v 1.61 2012/02/05 18:59:23 mlaan Exp $
 }
 
 interface
@@ -41,11 +39,7 @@ procedure RegisterWinControl_R(Cl: TPSRuntimeClassImporter);
 begin
   RIRegisterTWinControl(Cl);
 
-{$IFNDEF UNICODE}
-  with Cl.FindClass(FastUppercase(TWinControl.ClassName)) do
-{$ELSE}
   with Cl.FindClass(AnsiString(TWinControl.ClassName)) do
-{$ENDIF}
   begin
     RegisterPropertyHelper(@TWinControlParentBackground_R, @TWinControlParentBackground_W, 'ParentBackground');
   end;
@@ -136,14 +130,14 @@ begin
   Cl.Add(TFolderTreeView);
 end;
 
-procedure TAlphaBitmapAlphaFormat_W(Self: TAlphaBitmap; const T: TAlphaFormat); begin Self.AlphaFormat := T; end;
-procedure TAlphaBitmapAlphaFormat_R(Self: TAlphaBitmap; var T: TAlphaFormat); begin T := Self.AlphaFormat; end;
+procedure TBitmapAlphaFormat_W(Self: TBitmap; const T: TAlphaFormat); begin Self.AlphaFormat := T; end;
+procedure TBitmapAlphaFormat_R(Self: TBitmap; var T: TAlphaFormat); begin T := Self.AlphaFormat; end;
 
 procedure RegisterBitmapImage_R(Cl: TPSRuntimeClassImporter);
 begin
-  with Cl.Add(TAlphaBitmap) do
+  with Cl.FindClass('TBitmap') do
   begin
-    RegisterPropertyHelper(@TAlphaBitmapAlphaFormat_R, @TAlphaBitmapAlphaFormat_W, 'AlphaFormat');
+    RegisterPropertyHelper(@TBitmapAlphaFormat_R, @TBitmapAlphaFormat_W, 'AlphaFormat');
   end;
   Cl.Add(TBitmapImage);
 end;
@@ -191,17 +185,24 @@ end;
 procedure TSetupFormControlsFlipped_R(Self: TSetupForm; var T: Boolean); begin T := Self.ControlsFlipped; end;
 procedure TSetupFormFlipControlsOnShow_W(Self: TSetupForm; const T: Boolean); begin Self.FlipControlsOnShow := T; end;
 procedure TSetupFormFlipControlsOnShow_R(Self: TSetupForm; var T: Boolean); begin T := Self.FlipControlsOnShow; end;
+procedure TSetupFormKeepSizeY_W(Self: TSetupForm; const T: Boolean); begin Self.KeepSizeY := T; end;
+procedure TSetupFormKeepSizeY_R(Self: TSetupForm; var T: Boolean); begin T := Self.KeepSizeY; end;
 procedure TSetupFormRightToLeft_R(Self: TSetupForm; var T: Boolean); begin T := Self.RightToLeft; end;
+procedure TSetupFormSizeAndCenterOnShow_W(Self: TSetupForm; const T: Boolean); begin Self.SizeAndCenterOnShow := T; end;
+procedure TSetupFormSizeAndCenterOnShow_R(Self: TSetupForm; var T: Boolean); begin T := Self.SizeAndCenterOnShow; end;
 
 procedure RegisterSetupForm_R(Cl: TPSRuntimeClassImporter);
 begin
   with Cl.Add(TSetupForm) do
   begin
-    RegisterMethod(@TSetupForm.Center, 'Center');
-    RegisterMethod(@TSetupForm.CenterInsideControl, 'CenterInsideControl');
+    RegisterMethod(@TSetupForm.ShouldSizeX, 'ShouldSizeX');
+    RegisterMethod(@TSetupForm.ShouldSizeY, 'ShouldSizeY');
+    RegisterMethod(@TSetupForm.FlipSizeAndCenterIfNeeded, 'FlipSizeAndCenterIfNeeded');
     RegisterPropertyHelper(@TSetupFormControlsFlipped_R, nil, 'ControlsFlipped');
     RegisterPropertyHelper(@TSetupFormFlipControlsOnShow_R, @TSetupFormFlipControlsOnShow_W, 'FlipControlsOnShow');
+    RegisterPropertyHelper(@TSetupFormKeepSizeY_R, @TSetupFormKeepSizeY_W, 'KeepSizeY');
     RegisterPropertyHelper(@TSetupFormRightToLeft_R, nil, 'RightToLeft');
+    RegisterPropertyHelper(@TSetupFormSizeAndCenterOnShow_R, @TSetupFormSizeAndCenterOnShow_W, 'SizeAndCenterOnShow');
   end;
 end;
 
@@ -431,6 +432,7 @@ procedure TWizardPageCaption_W(Self: TWizardPage; T: String); begin Self.Caption
 procedure TWizardPageDescription_R(Self: TWizardPage; var T: String); begin T := Self.Description; end;
 procedure TWizardPageDescription_W(Self: TWizardPage; T: String); begin Self.Description := T; end;
 procedure TWizardPageSurface_R(Self: TWizardPage; var T: TNewNotebookPage); begin T := Self.Surface; end;
+procedure TWizardPageSurfaceColor_R(Self: TWizardPage; var T: TColor); begin T := Self.SurfaceColor; end;
 procedure TWizardPageSurfaceHeight_R(Self: TWizardPage; var T: Integer); begin T := Self.SurfaceHeight; end;
 procedure TWizardPageSurfaceWidth_R(Self: TWizardPage; var T: Integer); begin T := Self.SurfaceWidth; end;
 procedure TWizardPageOnActivate_R(Self: TWizardPage; var T: TWizardPageNotifyEvent); begin T := Self.OnActivate; end;
@@ -452,6 +454,7 @@ begin
     RegisterPropertyHelper(@TWizardPageCaption_R, @TWizardPageCaption_W, 'Caption');
     RegisterPropertyHelper(@TWizardPageDescription_R, @TWizardPageDescription_W, 'Description');
     RegisterPropertyHelper(@TWizardPageSurface_R, nil, 'Surface');
+    RegisterPropertyHelper(@TWizardPageSurfaceColor_R, nil, 'SurfaceColor');
     RegisterPropertyHelper(@TWizardPageSurfaceHeight_R, nil, 'SurfaceHeight');
     RegisterPropertyHelper(@TWizardPageSurfaceWidth_R, nil, 'SurfaceWidth');
     RegisterPropertyHelper(@TWizardPageOnActivate_R, @TWizardPageOnActivate_W, 'OnActivate');

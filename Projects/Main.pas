@@ -2574,8 +2574,8 @@ var
     try
       ReadFileIntoStream(MemStream, R);
       MemStream.Seek(0, soFromBeginning);
-      Result := TAlphaBitmap.Create;
-      TAlphaBitmap(Result).AlphaFormat := TAlphaFormat(SetupHeader.WizardImageAlphaFormat);
+      Result := TBitmap.Create;
+      Result.AlphaFormat := TAlphaFormat(SetupHeader.WizardImageAlphaFormat);
       Result.LoadFromStream(MemStream);
     finally
       MemStream.Free;
@@ -3692,7 +3692,7 @@ begin
       raise;
     end;
   end;
-  WizardForm.FlipControlsIfNeeded;
+  WizardForm.FlipSizeAndCenterIfNeeded(shWindowVisible in SetupHeader.Options, MainForm, True);
   WizardForm.SetCurPage(wpWelcome);
   if InstallMode = imNormal then begin
     WizardForm.ClickToStartPage; { this won't go past wpReady  }

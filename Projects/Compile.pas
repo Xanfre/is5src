@@ -203,8 +203,10 @@ type
     ssWizardImageBackColor,
     ssWizardImageFile,
     ssWizardImageStretch,
+    ssWizardResizable,
     ssWizardSmallImageBackColor,
     ssWizardSmallImageFile,
+    ssWizardSizePercent,
     ssWizardStyle);
   TLangOptionsSectionDirectives = (
     lsCopyrightFontName,
@@ -3654,6 +3656,23 @@ var
       end;
   end;
 
+  procedure StrToPercentages(const S: String; var X, Y: Integer; const Min, Max: Integer);
+  var
+    I: Integer;
+  begin
+    I := Pos(',', S);
+    if I = Length(S) then Invalid;
+    if I <> 0 then begin
+      X := StrToIntDef(Copy(S, 1, I-1), -1);
+      Y := StrToIntDef(Copy(S, I+1, Maxint), -1);
+    end else begin
+      X := StrToIntDef(S, -1);
+      Y := X;
+    end;
+    if (X < Min) or (X > Max) or (Y < Min) or (Y > Max) then
+      Invalid;
+  end;
+
 var
   P: Integer;
   AIncludes: TStringList;
@@ -4354,15 +4373,24 @@ begin
           Invalid;
         WizardImageFile := Value;
       end;
+    ssWizardResizable: begin
+        SetSetupHeaderOption(shWizardResizable);
+      end;
     ssWizardSmallImageFile: begin
         if Value = '' then
           Invalid;
         WizardSmallImageFile := Value;
       end;
+    ssWizardSizePercent: begin
+        StrToPercentages(Value, SetupHeader.WizardSizePercentX,
+          SetupHeader.WizardSizePercentY, 100, 150)
+      end;
     ssWizardStyle: begin
-        if CompareText(Value, 'modern') = 0 then begin
-          { no-op }
-        end else
+        if CompareText(Value, 'classic') = 0 then
+          SetupHeader.WizardStyle := wsClassic
+        else if CompareText(Value, 'modern') = 0 then
+          SetupHeader.WizardStyle := wsModern
+        else
           Invalid;
       end;
   end;
@@ -8556,6 +8584,7 @@ begin
     SetupHeader.CloseApplicationsFilter := '*.exe,*.dll,*.chm';
     SetupHeader.WizardImageAlphaFormat := afIgnored;
     UsedUserAreasWarning := True;
+    SetupHeader.WizardStyle := wsClassic;
 
     { Read [Setup] section }
     EnumIniSection(EnumSetup, 'Setup', 0, 0, True, True, '', False, False);
@@ -8729,6 +8758,15 @@ begin
         AbortCompileOnLineFmt(SCompilerEntryInvalid2, ['Setup', 'OutputManifestFile']);
       end;
     end;
+    if SetupDirectiveLines[ssWizardSizePercent] = 0 then begin
+      if SetupHeader.WizardStyle = wsModern then
+        SetupHeader.WizardSizePercentX := 120
+      else
+        SetupHeader.WizardSizePercentX := 100;
+      SetupHeader.WizardSizePercentY := SetupHeader.WizardSizePercentX;
+    end;
+    if (SetupDirectiveLines[ssWizardResizable] = 0) and (SetupHeader.WizardStyle = wsModern) then
+      Include(SetupHeader.Options, shWizardResizable);
 
     LineNumber := 0;
 
@@ -9239,6 +9277,7 @@ begin
           else begin
             { Bad option }
             Result := isceInvalidParam;
+            Exit;
           end;
         end
         else if StrLIComp(P, 'OutputDir=', Length('OutputDir=')) = 0 then begin
