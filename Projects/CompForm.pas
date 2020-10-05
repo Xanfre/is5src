@@ -3175,7 +3175,7 @@ begin
   if (FStepMode = smStepInto) or
      ((FStepMode = smStepOver) and not Intermediate) or
      ((FStepMode = smRunToCursor) and
-      (FRunToCursorPoint.Kind = Message.WParam) and
+      (FRunToCursorPoint.Kind = Integer(Message.WParam)) and
       (FRunToCursorPoint.Index = Message.LParam)) or
      (FBreakPoints.IndexOf(Pointer(LineNumber)) <> -1) then begin
     MoveCaret(LineNumber, True);

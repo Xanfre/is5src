@@ -236,7 +236,7 @@ type
       foRecurseSubDirsExternal, foReplaceSameVersionIfContentsDiffer,
       foDontVerifyChecksum, foUninsNoSharedFilePrompt, foCreateAllSubDirs,
       fo32Bit, fo64Bit, foExternalSizePreset, foSetNTFSCompression,
-      foUnsetNTFSCompression, foGacInstall);
+      foUnsetNTFSCompression, foGacInstall, foIgnoreSize);
     FileType: (ftUserFile, ftUninstExe);
   end;
 const

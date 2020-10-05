@@ -5783,7 +5783,7 @@ const
     (Name: ParamCommonAfterInstall; Flags: []),
     (Name: ParamCommonMinVersion; Flags: []),
     (Name: ParamCommonOnlyBelowVersion; Flags: []));
-  Flags: array[0..39] of PChar = (
+  Flags: array[0..40] of PChar = (
     'confirmoverwrite', 'uninsneveruninstall', 'isreadme', 'regserver',
     'sharedfile', 'restartreplace', 'deleteafterinstall',
     'comparetimestamp', 'fontisnttruetype', 'regtypelib', 'external',
@@ -5794,7 +5794,7 @@ const
     'noencryption', 'nocompression', 'dontverifychecksum',
     'uninsnosharedfileprompt', 'createallsubdirs', '32bit', '64bit',
     'solidbreak', 'setntfscompression', 'unsetntfscompression',
-    'sortfilesbyname', 'gacinstall', 'sign', 'signonce');
+    'sortfilesbyname', 'gacinstall', 'sign', 'signonce', 'ignoresize');
   AttribsFlags: array[0..3] of PChar = (
     'readonly', 'hidden', 'system', 'notcontentindexed');
   AccessMasks: array[0..2] of TNameAndAccessMask = (
@@ -6404,6 +6404,7 @@ begin
                    37: Include(Options, foGacInstall);
                    38: Sign := True;
                    39: SignOnce := True;
+                   40: Include(Options, foIgnoreSize);
                  end;
 
                { Source }

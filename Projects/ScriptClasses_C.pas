@@ -92,6 +92,7 @@ begin
     RegisterProperty('MinItemHeight', 'Integer', iptrw);
     RegisterProperty('Offset', 'Integer', iptrw);
     RegisterProperty('OnClickCheck', 'TNotifyEvent', iptrw);
+    RegisterProperty('MouseOver', 'Boolean', iptrw);
     RegisterProperty('BorderStyle', 'TBorderStyle', iptrw);
     RegisterProperty('Color', 'TColor', iptrw);
     RegisterProperty('Font', 'TFont', iptrw);

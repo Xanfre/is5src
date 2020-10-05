@@ -37,6 +37,7 @@ type
 var
   CurProgress: Integer64;
   ProgressShiftCount: Cardinal;
+  CFIgnoreSize: Boolean;
 
 { TSetupUninstallLog }
 
@@ -92,7 +93,7 @@ begin
   AfterInstallFilesSize := InstallFilesSize;
   for N := 0 to Entries[seFile].Count-1 do begin
     CurFile := PSetupFileEntry(Entries[seFile][N]);
-    if ShouldProcessFileEntry(WizardComponents, WizardTasks, CurFile, False) then begin
+    if ShouldProcessFileEntry(WizardComponents, WizardTasks, CurFile, False) and not (foIgnoreSize in CurFile^.Options) then begin
       with CurFile^ do begin
         if LocationEntry <> -1 then  { not an "external" file }
           FileSize := PSetupFileLocationEntry(Entries[seFileLocation][
@@ -163,19 +164,22 @@ end;
 
 procedure SetProgress(const AProgress: Integer64);
 begin
-  CurProgress := AProgress;
+  if not CFIgnoreSize then
+    CurProgress := AProgress;
   UpdateProgressGauge;
 end;
 
 procedure IncProgress(const N: Cardinal);
 begin
-  Inc64(CurProgress, N);
+  if not CFIgnoreSize then
+    Inc64(CurProgress, N);
   UpdateProgressGauge;
 end;
 
 procedure IncProgress64(const N: Integer64);
 begin
-  Inc6464(CurProgress, N);
+  if not CFIgnoreSize then
+    Inc6464(CurProgress, N);
   UpdateProgressGauge;
 end;
 
@@ -961,6 +965,9 @@ var
   begin
     Log('-- File entry --');
 
+    CFIgnoreSize := False;
+    if foIgnoreSize in CurFile^.Options then
+      CFIgnoreSize := True;
     CheckedDestFileExistedBefore := False;
     DestFileExistedBefore := False;  { prevent warning }
 

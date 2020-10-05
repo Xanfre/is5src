@@ -1670,7 +1670,7 @@ begin
       with FileEntry^ do begin
         if (Components <> '') and
            ((Tasks = '') and (Check = '')) then begin {don't count tasks or scripted entries}
-          if ShouldProcessFileEntry(ComponentNameAsList, nil, FileEntry, True) then begin
+          if ShouldProcessFileEntry(ComponentNameAsList, nil, FileEntry, True) and not (foIgnoreSize in Options) then begin
             if LocationEntry <> -1 then
               Inc6464(Result, PSetupFileLocationEntry(Entries[seFileLocation][LocationEntry])^.OriginalSize)
             else
@@ -3299,7 +3299,7 @@ begin
     with PSetupFileEntry(Entries[seFile][I])^ do begin
       if LocationEntry <> -1 then begin { not an "external" file }
         if Components = '' then { no types or a file that doesn't belong to any component }
-          if (Tasks = '') and (Check = '') then {don't count tasks and scripted entries}
+          if (Tasks = '') and (Check = '') and not (foIgnoreSize in Options) then {don't count tasks and scripted entries}
             Inc6464(MinimumSpace, PSetupFileLocationEntry(Entries[seFileLocation][LocationEntry])^.OriginalSize)
       end else begin
         if not(foExternalSizePreset in Options) then begin
@@ -3319,7 +3319,7 @@ begin
           end;
         end;
         if Components = '' then { no types or a file that doesn't belong to any component }
-          if (Tasks = '') and (Check = '') then {don't count tasks or scripted entries}
+          if (Tasks = '') and (Check = '') and not (foIgnoreSize in Options) then {don't count tasks or scripted entries}
             Inc6464(MinimumSpace, ExternalSize);
       end;
     end;
@@ -3640,6 +3640,7 @@ begin
     S := S + SNewLine2 + SetupMessages[msgAboutSetupNote];
   if SetupMessages[msgTranslatorNote] <> '' then
     S := S + SNewLine2 + SetupMessages[msgTranslatorNote];
+  S := S + SNewLine2 + 'Inno Setup has been modified for use in this program.';
 {$IFDEF UNICODE}
   StringChangeEx(S, '(C)', #$00A9, True);
 {$ENDIF}

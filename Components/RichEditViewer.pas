@@ -24,6 +24,7 @@ uses
 type
   TRichEditViewer = class(TMemo)
   private
+    FWheelAccum: Integer;
     FUseRichEdit: Boolean;
     FRichEditLoaded: Boolean;
     procedure SetRTFTextProp(const Value: AnsiString);
@@ -32,6 +33,10 @@ type
     procedure CMColorChanged(var Message: TMessage); message CM_COLORCHANGED;
     procedure CMSysColorChange(var Message: TMessage); message CM_SYSCOLORCHANGE;
     procedure CNNotify(var Message: TWMNotify); message CN_NOTIFY;
+    procedure WMMouseWheel(var Message: TMessage); message $020A;
+    procedure WMMouseWheelClick(var Message: TMessage); message $0207;
+    procedure WMMouseWheelDClick(var Message: TMessage); message $0209;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
   protected
     procedure CreateParams(var Params: TCreateParams); override;
     procedure CreateWnd; override;
@@ -309,6 +314,42 @@ begin
       end;
     end;
   end;
+end;
+
+{ Implement better scrolling }
+procedure TRichEditViewer.WMMouseWheel(var Message: TMessage);
+const
+  WHEEL_DELTA = 120;
+begin
+  if (Message.WParam and (MK_CONTROL or MK_SHIFT) = 0) then begin
+    Inc(FWheelAccum, Smallint(Message.WParam shr 16));
+    if Abs(FWheelAccum) >= WHEEL_DELTA then begin
+      while FWheelAccum >= WHEEL_DELTA do begin
+        SendMessage(Handle, WM_VSCROLL, SB_LINEUP, 0);
+        Dec(FWheelAccum, WHEEL_DELTA);
+      end;
+      while FWheelAccum <= -WHEEL_DELTA do begin
+        SendMessage(Handle, WM_VSCROLL, SB_LINEDOWN, 0);
+        Inc(FWheelAccum, WHEEL_DELTA);
+      end;
+      SendMessage(Handle, WM_VSCROLL, SB_ENDSCROLL, 0);
+    end;
+  end;
+end;
+
+{ Ignore input from middle mouse button }
+procedure TRichEditViewer.WMMouseWheelClick(var Message: TMessage);
+begin
+end;
+
+procedure TRichEditViewer.WMMouseWheelDClick(var Message: TMessage);
+begin
+end;
+
+procedure TRichEditViewer.WMSetFocus(var Message: TWMSetFocus);
+begin
+  FWheelAccum := 0;
+  inherited;
 end;
 
 procedure Register;

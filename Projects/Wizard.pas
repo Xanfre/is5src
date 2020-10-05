@@ -188,6 +188,7 @@ type
     DoneWithWizard: Boolean;
     PrepareToInstallNeedsRestart: Boolean;
     EnableAnchorOuterPagesOnResize: Boolean;
+    EnableAdjustReadyLabelHeightOnResize: Boolean;
     procedure AdjustFocus;
     procedure CalcCurrentComponentsSpace;
     procedure ChangeReadyLabel(const S: String);
@@ -457,7 +458,7 @@ begin
   for I := 0 to Entries[seFile].Count-1 do begin
     CurFile := PSetupFileEntry(Entries[seFile][I]);
     if (CurFile.Tasks = '') and (CurFile.Check = '') and {don't count tasks or scripted entries}
-       ShouldProcessFileEntry(SelectedComponents, nil, CurFile, True) then begin
+       ShouldProcessFileEntry(SelectedComponents, nil, CurFile, True) and not (foIgnoreSize in CurFile^.Options) then begin
       with CurFile^ do begin
         if LocationEntry <> -1 then
           Inc6464(CurrentComponentsSpace, PSetupFileLocationEntry(Entries[seFileLocation][LocationEntry])^.OriginalSize)
@@ -1223,6 +1224,8 @@ begin
     AnchorOuterPage(WelcomePage, WizardBitmapImage);
     AnchorOuterPage(FinishedPage, WizardBitmapImage2);
   end;
+  if EnableAdjustReadyLabelHeightOnResize then
+    IncTopDecHeight(ReadyMemo, AdjustLabelHeight(ReadyLabel));
 end;
 
 procedure TWizardForm.FlipSizeAndCenterIfNeeded(const ACenterInsideControl: Boolean;
@@ -1375,6 +1378,7 @@ procedure TWizardForm.ChangeReadyLabel(const S: String);
 begin
   ReadyLabel.Caption := S;
   IncTopDecHeight(ReadyMemo, AdjustLabelHeight(ReadyLabel));
+  EnableAdjustReadyLabelHeightOnResize := True;
 end;
 
 procedure TWizardForm.ChangeFinishedLabel(const S: String);
@@ -1769,9 +1773,11 @@ begin
     if PrepareToInstallNeedsRestart then begin
       Y := PreparingLabel.Top + PreparingLabel.Height;
       PreparingYesRadio.Top := Y;
+      PreparingYesRadio.Anchors := [akLeft, akTop, akRight];
       PreparingYesRadio.Caption := SetupMessages[msgYesRadio];
       PreparingYesRadio.Visible := True;
       PreparingNoRadio.Top := Y + ScalePixelsY(22);
+      PreparingNoRadio.Anchors := [akLeft, akTop, akRight];
       PreparingNoRadio.Caption := SetupMessages[msgNoRadio];
       PreparingNoRadio.Visible := True;
     end;
@@ -1856,9 +1862,11 @@ begin
     PreparingMemo.Visible := True;
     Y := PreparingMemo.Top + PreparingMemo.Height + ScalePixelsY(12);
     PreparingYesRadio.Top := Y;
+    PreparingYesRadio.Anchors := [akLeft, akRight, akBottom];
     PreparingYesRadio.Caption := SetupMessages[msgCloseApplications];
     PreparingYesRadio.Visible := True;
     PreparingNoRadio.Top := Y + ScalePixelsY(22);
+    PreparingNoRadio.Anchors := [akLeft, akRight, akBottom];
     PreparingNoRadio.Caption := SetupMessages[msgDontCloseApplications];
     PreparingNoRadio.Visible := True;
   end;

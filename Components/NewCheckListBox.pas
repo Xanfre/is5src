@@ -69,6 +69,7 @@ type
     FDisableItemStateDeletion: Integer;
     FWheelAccum: Integer;
     FUseRightToLeft: Boolean;
+    FMouseOver: Boolean;
     procedure UpdateThemeData(const Close, Open: Boolean);
     function CanFocusItem(Item: Integer): Boolean;
     function CheckPotentialRadioParents(Index, ALevel: Integer): Boolean;
@@ -123,6 +124,8 @@ type
       override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure UpdateHotIndex(NewHotIndex: Integer);
+    procedure SetMouseOver(Value: Boolean);
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure SetCaption(Index: Integer; const Value: String);
     procedure SetChecked(Index: Integer; const AChecked: Boolean);
@@ -175,6 +178,7 @@ type
     property OnDragDrop;
     property OnDragOver;
     property OnEndDrag;
+    property MouseOver: Boolean read FMouseOver write SetMouseOver default False;
     property OnEnter;
     property OnExit;
     property OnKeyDown;
@@ -1198,9 +1202,24 @@ begin
   end;
 end;
 
+procedure TNewCheckListBox.SetMouseOver(Value: Boolean);
+begin
+  if Value <> FMouseOver then
+  begin
+    FMouseOver := Value;
+  end;
+end;
+
+procedure TNewCheckListBox.CMMouseEnter(var Message: TMessage);
+begin
+  SetMouseOver(True);
+  inherited;
+end;
+
 procedure TNewCheckListBox.CMMouseLeave(var Message: TMessage);
 begin
   UpdateHotIndex(-1);
+  SetMouseOver(False);
   inherited;
 end;
 
@@ -1710,16 +1729,7 @@ procedure TNewCheckListBox.WMMouseWheel(var Message: TMessage);
 const
   WHEEL_DELTA = 120;
 begin
-  { Work around a Windows bug (reproducible on 2000/XP/2003, but not Vista):
-    On an ownerdraw-variable list box, scrolling up or down more than one item
-    at a time with animation enabled causes a strange effect: first all visible
-    items appear to scroll off the bottom, then the items are all repainted in
-    the correct position. To avoid that, we implement our own mouse wheel
-    handling that scrolls only one item at a time.
-    (Note: The same problem exists when scrolling a page at a time using the
-    scroll bar. But because it's not as obvious, we don't work around it.) }
-  if (Lo(GetVersion) = 5) and
-     (Message.WParam and (MK_CONTROL or MK_SHIFT) = 0) then begin
+  if (Message.WParam and (MK_CONTROL or MK_SHIFT) = 0) then begin
     Inc(FWheelAccum, Smallint(Message.WParam shr 16));
     if Abs(FWheelAccum) >= WHEEL_DELTA then begin
       while FWheelAccum >= WHEEL_DELTA do begin
@@ -1734,8 +1744,7 @@ begin
     end;
   end
   else
-    { Like the default handling, don't scroll if Control or Shift are down,
-      and on Vista always use the default handling since it isn't bugged. }
+    { Like the default handling, don't scroll if Control or Shift are down. }
     inherited;
 end;
 
