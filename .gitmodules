@@ -4,3 +4,4 @@
 [submodule "Components/UniPs"]
 	path = Components/UniPs
 	url = https://github.com/remobjects/pascalscript.git
+	branch = stable

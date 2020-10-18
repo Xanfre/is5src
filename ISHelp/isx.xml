@@ -617,6 +617,8 @@ external 'MessageBoxA@user32.dll stdcall';
 #endif
 </precode>
 
+<p>Use <link topic="isxfunc_CreateCallback">CreateCallback</link> to be able to perform direct callbacks from DLL functions (like Windows API functions) to functions in your script.</p>
+
 </body>
 </topic>
 

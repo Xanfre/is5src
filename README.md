@@ -35,24 +35,12 @@ Source code README
   cloning the main Inno Setup repository, commit your work on topic branches
   and make pull requests. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-- Install Borland Delphi
+- Install Embarcadero Delphi
 
   Unicode Inno Setup:
 
-  We compile all of Inno Setup's projects under Delphi 2009 with Update 3.
+  We compile all of Inno Setup's projects under Delphi 10.3.3 Rio.
   
-  Newer Delphi versions should also work but will lead to significantly larger
-  files.
-
-  To work with the Delphi 2009 IDE under Windows 8.1 you need these two things
-  to make it work well:
-
-  http://www.jrsoftware.org/files/Delphi_2007_2009_WOW64_Debugger_Fix.exe
-    (md5sum: 545fc506c0614cf7a3339a7acb5217dc)
-
-  http://www.jrsoftware.org/files/dzEditorLineEndsFix.exe
-    (md5sum: c9598cf14452dd08987c5aec23d04f7d)
-
   Non Unicode Inno Setup:
 
   We compile all of Inno Setup's projects under Delphi 2.01, with the

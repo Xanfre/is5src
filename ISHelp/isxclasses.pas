@@ -523,6 +523,7 @@ TNewCheckListBox = class(TCustomListBox)
   property Sorted: Boolean; read write;
   property OnClick: TNotifyEvent; read write;
   property OnDblClick: TNotifyEvent; read write;
+  property OnMouseOver: Boolean; read write;
   property OnKeyDown: TKeyEvent; read write;
   property OnKeyPress: TKeyPressEvent; read write;
   property OnKeyUp: TKeyEvent; read write;
@@ -696,12 +697,14 @@ TUIStateForm = class(TForm)
 end;
 
 TSetupForm = class(TUIStateForm)
-  procedure Center;
-  procedure CenterInsideControl(const Ctl: TWinControl; const InsideClientArea: Boolean);
-  procedure FlipControlsIfNeeded;
+  function ShouldSizeX: Boolean;
+  function ShouldSizeY: Boolean;
+  procedure FlipSizeAndCenterIfNeeded(const ACenterInsideControl: Boolean; const CenterInsideControlCtl: TWinControl; const CenterInsideControlInsideClientArea: Boolean);
   property ControlsFlipped: Boolean; read;
   property FlipControlsOnShow: Boolean; read write;
+  property KeepSizeY: Boolean; read; write;
   property RightToLeft: Boolean; read;
+  property SizeAndCenterOnShow: Boolean; read write;
 end;
 
 TMainForm = class(TSetupForm)
