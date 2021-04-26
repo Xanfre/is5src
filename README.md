@@ -5,6 +5,9 @@ Copyright (C) 1997-2018 Jordan Russell. All rights reserved.
 Portions Copyright (C) 2000-2018 Martijn Laan. All rights reserved.  
 For conditions of distribution and use, see LICENSE.TXT.
 
+This is a fork of the latest source release for Inno Setup 5 and is _not_ the original project.  
+For the original project, see https://github.com/jrsoftware/issrc.
+
 Source code README
 
 1. Getting Started
@@ -15,7 +18,7 @@ Source code README
   First you need to download the sources from Github. From the command line do:
 
   ```
-  > git clone https://github.com/jrsoftware/issrc.git is
+  > git clone https://github.com/Xanfre/is5src.git is
   > cd is
   > git submodule init
   > git submodule update
